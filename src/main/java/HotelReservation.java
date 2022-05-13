@@ -2,7 +2,6 @@ import model.HotelModel;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class HotelReservation {
     private String errorMessage;
@@ -25,19 +24,23 @@ public class HotelReservation {
             for (HotelModel hotel: hotels) {
                 double price = hotel.getTotalPrice(clientType, reservationDates);
 
-                //Compara o preço do hotel atual com o último preço mais barato
+                //Compara o preço do hotel atual com o último preço mais barato. Em caso negativo, faz uma segunda
+                //validação para ver se os preços são iguais.
                 if (cheapestPrice == 0 || cheapestPrice > price){
                     cheapestPrice = price;
                     cheapestHotel = hotel;
-                }
-
-                //Verifica se o hotel atual possui o mesmo preço do hotel até então mais barato.
-                if (cheapestPrice == price && cheapestHotel.rating < hotel.rating){
+                } else if (cheapestPrice == price && cheapestHotel.rating < hotel.rating){
                     cheapestHotel = hotel;
                 }
             }
 
-            return cheapestHotel.name;
+            String hotelName = "";
+
+            if (cheapestHotel != null){
+                hotelName = cheapestHotel.name;
+            }
+
+            return hotelName;
         }
 
         return errorMessage;
@@ -61,7 +64,7 @@ public class HotelReservation {
     }
 
     private void getHotels(){
-        hotels = new ArrayList<HotelModel>();
+        hotels = new ArrayList<>();
 
         hotels.add(new HotelModel("Lakewood", 3, 110, 90, 80, 80));
         hotels.add(new HotelModel("Bridgewood", 4, 160, 60, 110, 50));
